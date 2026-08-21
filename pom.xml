@@ -8,14 +8,13 @@
     <version>1.0</version>
 
     <properties>
-        <!-- Java version 17 (Minecraft 1.18+ ke liye) -->
-        <maven.compiler.source>17</maven.compiler.source>
-        <maven.compiler.target>17</maven.compiler.target>
+        <!-- Java 25 Setup -->
+        <maven.compiler.source>25</maven.compiler.source>
+        <maven.compiler.target>25</maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
 
     <repositories>
-        <!-- Spigot API Repository -->
         <repository>
             <id>spigot-repo</id>
             <url>https://hub.spigotmc.org/nexus/content/repositories/snapshots/</url>
@@ -23,11 +22,10 @@
     </repositories>
 
     <dependencies>
-        <!-- Spigot API Dependency -->
         <dependency>
             <groupId>org.spigotmc</groupId>
             <artifactId>spigot-api</artifactId>
-            <version>1.20.1-R0.1-SNAPSHOT</version> <!-- Apna MC version yahan daalein -->
+            <version>1.20.1-R0.1-SNAPSHOT</version> 
             <scope>provided</scope>
         </dependency>
     </dependencies>
