@@ -10,20 +10,20 @@ jobs:
 
     steps:
     - name: Checkout Code
-      uses: actions/checkout@v3
+      uses: actions/checkout@v4
 
-    - name: Set up JDK 17
-      uses: actions/setup-java@v3
+    - name: Set up JDK 25
+      uses: actions/setup-java@v4
       with:
-        java-version: '17'
-        distribution: 'temurin'
+        java-version: '25'
+        distribution: 'oracle' # Oracle generally supports newer Java versions faster
         cache: maven
 
     - name: Build with Maven
       run: mvn clean package
 
     - name: Upload JAR File
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       with:
         name: CustomWebMap-Plugin
         path: target/CustomWebMap-1.0.jar
