@@ -4,21 +4,20 @@ import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitRunnable;
-
 import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
 
 public class CustomMapPlugin extends JavaPlugin {
 
-    // Yahan hum aapki website ka API URL daalenge jahan data receive hoga
-    private final String apiUrl = "http://localhost/map_project/api/update_location.php"; 
+    // Aapka exact website API URL
+    private final String apiUrl = "https://minecraftsmp.gamer.gd/update_location.php"; 
 
     @Override
     public void onEnable() {
-        getLogger().info("Custom Web Map Plugin Start Ho Gaya Hai!");
+        getLogger().info("Custom Web Map Plugin Started for MinecraftSMP!");
 
-        // Har 2 seconds (40 ticks) mein player ki location check karega
+        // Har 2 second (40 ticks) mein player ki location update karega
         new BukkitRunnable() {
             @Override
             public void run() {
@@ -30,11 +29,9 @@ public class CustomMapPlugin extends JavaPlugin {
     private void sendPlayerDataToWeb() {
         for (Player player : Bukkit.getOnlinePlayers()) {
             String name = player.getName();
-            // 2D map ke liye humein X aur Z coordinates chahiye
             int x = player.getLocation().getBlockX();
             int z = player.getLocation().getBlockZ(); 
 
-            // Data ko JSON format mein pack karenge
             String jsonData = "{\"player\":\"" + name + "\", \"x\":" + x + ", \"z\":" + z + "}";
 
             try {
@@ -45,17 +42,15 @@ public class CustomMapPlugin extends JavaPlugin {
                 conn.setRequestProperty("Accept", "application/json");
                 conn.setDoOutput(true);
 
-                // Website ko data bhej rahe hain
                 try(OutputStream os = conn.getOutputStream()) {
                     byte[] input = jsonData.getBytes("utf-8");
                     os.write(input, 0, input.length);
                 }
                 
-                int responseCode = conn.getResponseCode(); 
+                conn.getResponseCode(); 
                 conn.disconnect();
-
             } catch (Exception e) {
-                // Agar website band hogi toh backend error yahan handle hoga, server crash nahi hoga
+                // Background connection error handle
             }
         }
     }
