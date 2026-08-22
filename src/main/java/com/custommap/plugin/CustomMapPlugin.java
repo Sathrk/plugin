@@ -49,5 +49,5 @@ public class CustomMapPlugin extends JavaPlugin {
                 getLogger().warning("Website connection error: " + e.getMessage());
             }
         }
-    } }
+    } 
 }
