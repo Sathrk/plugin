@@ -32,32 +32,21 @@ public class CustomMapPlugin extends JavaPlugin {
             int x = player.getLocation().getBlockX();
             int z = player.getLocation().getBlockZ(); 
 
-            String jsonData = "{\"player\":\"" + name + "\", \"x\":" + x + ", \"z\":" + z + "}";
-
             try {
-                URL url = new URL(apiUrl);
+                // URL ke andar parameters bhej rahe hain (GET Request)
+                String fullUrl = apiUrl + "?player=" + name + "&x=" + x + "&z=" + z;
+                
+                URL url = new URL(fullUrl);
                 HttpURLConnection conn = (HttpURLConnection) url.openConnection();
-                conn.setRequestMethod("POST");
-                conn.setRequestProperty("Content-Type", "application/json; utf-8");
-                conn.setRequestProperty("Accept", "application/json");
-                
-                // InfinityFree security ko bypass karne ke liye fake browser header
-                conn.setRequestProperty("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36");
-                
-                conn.setDoOutput(true);
-
-                try(OutputStream os = conn.getOutputStream()) {
-                    byte[] input = jsonData.getBytes("utf-8");
-                    os.write(input, 0, input.length);
-                }
+                conn.setRequestMethod("GET");
+                conn.setRequestProperty("User-Agent", "Mozilla/5.0");
                 
                 int responseCode = conn.getResponseCode(); 
                 if (responseCode != 200) {
-                    getLogger().warning("Data bhejne mein error. Server ne code return kiya: " + responseCode);
+                    getLogger().warning("Data bhejne mein error. Code: " + responseCode);
                 }
                 conn.disconnect();
             } catch (Exception e) {
-                // Ab error console mein print hoga taaki humein problem pata chale
                 getLogger().warning("Website connection error: " + e.getMessage());
             }
         }
