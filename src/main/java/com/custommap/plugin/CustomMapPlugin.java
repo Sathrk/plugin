@@ -14,7 +14,19 @@ public class CustomMapPlugin extends JavaPlugin {
     private final String apiUrl = "https://minecraftsmp.gamer.gd/update_location.php"; 
 
     @Override
-   private void sendPlayerDataToWeb() {
+    public void onEnable() {
+        getLogger().info("Custom Web Map Plugin Started for MinecraftSMP!");
+
+        // Har 2 second (40 ticks) mein player ki location update karega
+        new BukkitRunnable() {
+            @Override
+            public void run() {
+                sendPlayerDataToWeb();
+            }
+        }.runTaskTimerAsynchronously(this, 0L, 40L); 
+    }
+
+    private void sendPlayerDataToWeb() {
         for (Player player : Bukkit.getOnlinePlayers()) {
             String name = player.getName();
             int x = player.getLocation().getBlockX();
@@ -49,5 +61,5 @@ public class CustomMapPlugin extends JavaPlugin {
                 getLogger().warning("Website connection error: " + e.getMessage());
             }
         }
-    } 
+    }
 }
