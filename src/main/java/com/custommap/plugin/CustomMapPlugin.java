@@ -9,12 +9,11 @@ import java.net.URL;
 
 public class CustomMapPlugin extends JavaPlugin {
 
-    // Aapka exact website API URL
     private final String apiUrl = "https://minecraftsmp.gamer.gd/update_location.php"; 
 
     @Override
     public void onEnable() {
-        getLogger().info("Custom Web Map Plugin Started!");
+        getLogger().info("Custom Web Map Plugin Started Successfully!");
 
         // Har 2 seconds (40 ticks) mein player ki location update karega
         new BukkitRunnable() {
@@ -32,16 +31,23 @@ public class CustomMapPlugin extends JavaPlugin {
             int z = player.getLocation().getBlockZ(); 
 
             try {
-                // URL ke andar parameters bhej rahe hain (GET Request)
                 String fullUrl = apiUrl + "?player=" + name + "&x=" + x + "&z=" + z;
                 URL url = new URL(fullUrl);
                 HttpURLConnection conn = (HttpURLConnection) url.openConnection();
                 conn.setRequestMethod("GET");
                 conn.setRequestProperty("User-Agent", "Mozilla/5.0");
-                conn.getResponseCode();
+                
+                int responseCode = conn.getResponseCode();
+                // Agar server se OK na aaye toh console mein error dikhayega
+                if (responseCode != 200) {
+                    getLogger().warning("Failed to update location. Response code: " + responseCode);
+                }
+                
                 conn.disconnect();
             } catch (Exception e) {
-                // Background error ignore taaki server lag na ho
+                // Ab error seedha Minecraft console mein print hoga taaki pata chale kya issue hai
+                getLogger().severe("Error sending player location: " + e.getMessage());
+                e.printStackTrace();
             }
         }
     }
