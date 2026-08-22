@@ -33,18 +33,21 @@ public class CustomMapPlugin extends JavaPlugin {
             int z = player.getLocation().getBlockZ(); 
 
             try {
-                // URL ke andar parameters bhej rahe hain (GET Request)
-                String fullUrl = apiUrl + "?player=" + name + "&x=" + x + "&z=" + z;
-                
-                URL url = new URL(fullUrl);
+                URL url = new URL(apiUrl);
                 HttpURLConnection conn = (HttpURLConnection) url.openConnection();
-                conn.setRequestMethod("GET");
-                conn.setRequestProperty("User-Agent", "Mozilla/5.0");
+                conn.setRequestMethod("POST");
+                // Form data format jo InfinityFree bina kisi error ke accept karta hai
+                conn.setRequestProperty("Content-Type", "application/x-www-form-urlencoded; charset=utf-8");
+                conn.setDoOutput(true);
+
+                String postData = "player=" + name + "&x=" + x + "&z=" + z;
+
+                try(OutputStream os = conn.getOutputStream()) {
+                    byte[] input = postData.getBytes("utf-8");
+                    os.write(input, 0, input.length);
+                }
                 
                 int responseCode = conn.getResponseCode(); 
-                if (responseCode != 200) {
-                    getLogger().warning("Data bhejne mein error. Code: " + responseCode);
-                }
                 conn.disconnect();
             } catch (Exception e) {
                 getLogger().warning("Website connection error: " + e.getMessage());
