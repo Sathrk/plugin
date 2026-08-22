@@ -4,18 +4,22 @@ import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitRunnable;
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.net.URLEncoder;
 
 public class CustomMapPlugin extends JavaPlugin {
 
-    private final String apiUrl = "https://minecraftsmp.gamer.gd/update_location.php"; 
+    // Aapka direct dedicated IP aur Port URL
+    private final String apiUrl = "http://157.90.5.77:12814/update"; 
 
     @Override
     public void onEnable() {
-        getLogger().info("Custom Web Map Plugin Started Successfully!");
+        getLogger().info("Direct Port Map Plugin Enabled Successfully!");
 
-        // Har 2 seconds (40 ticks) mein player ki location update karega
+        // Har 2 seconds (40 ticks) mein player ki location direct port par bhejega
         new BukkitRunnable() {
             @Override
             public void run() {
@@ -26,28 +30,26 @@ public class CustomMapPlugin extends JavaPlugin {
 
     private void sendPlayerDataToWeb() {
         for (Player player : Bukkit.getOnlinePlayers()) {
-            String name = player.getName();
-            int x = player.getLocation().getBlockX();
-            int z = player.getLocation().getBlockZ(); 
-
             try {
+                String name = URLEncoder.encode(player.getName(), "UTF-8");
+                int x = player.getLocation().getBlockX();
+                int z = player.getLocation().getBlockZ(); 
+
                 String fullUrl = apiUrl + "?player=" + name + "&x=" + x + "&z=" + z;
                 URL url = new URL(fullUrl);
                 HttpURLConnection conn = (HttpURLConnection) url.openConnection();
                 conn.setRequestMethod("GET");
-                conn.setRequestProperty("User-Agent", "Mozilla/5.0");
+                conn.setConnectTimeout(3000);
+                conn.setReadTimeout(3000);
                 
-                int responseCode = conn.getResponseCode();
-                // Agar server se OK na aaye toh console mein error dikhayega
-                if (responseCode != 200) {
-                    getLogger().warning("Failed to update location. Response code: " + responseCode);
-                }
+                // Response read karna zaroori hai taaki request complete ho
+                BufferedReader reader = new BufferedReader(new InputStreamReader(conn.getInputStream()));
+                while (reader.readLine() != null) {}
+                reader.close();
                 
                 conn.disconnect();
             } catch (Exception e) {
-                // Ab error seedha Minecraft console mein print hoga taaki pata chale kya issue hai
-                getLogger().severe("Error sending player location: " + e.getMessage());
-                e.printStackTrace();
+                // Background errors ignore honge taaki server lag na ho
             }
         }
     }
