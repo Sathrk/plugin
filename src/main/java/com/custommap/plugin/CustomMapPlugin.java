@@ -14,19 +14,7 @@ public class CustomMapPlugin extends JavaPlugin {
     private final String apiUrl = "https://minecraftsmp.gamer.gd/update_location.php"; 
 
     @Override
-    public void onEnable() {
-        getLogger().info("Custom Web Map Plugin Started for MinecraftSMP!");
-
-        // Har 2 second (40 ticks) mein player ki location update karega
-        new BukkitRunnable() {
-            @Override
-            public void run() {
-                sendPlayerDataToWeb();
-            }
-        }.runTaskTimerAsynchronously(this, 0L, 40L); 
-    }
-
-    private void sendPlayerDataToWeb() {
+   private void sendPlayerDataToWeb() {
         for (Player player : Bukkit.getOnlinePlayers()) {
             String name = player.getName();
             int x = player.getLocation().getBlockX();
@@ -40,6 +28,10 @@ public class CustomMapPlugin extends JavaPlugin {
                 conn.setRequestMethod("POST");
                 conn.setRequestProperty("Content-Type", "application/json; utf-8");
                 conn.setRequestProperty("Accept", "application/json");
+                
+                // InfinityFree security ko bypass karne ke liye fake browser header
+                conn.setRequestProperty("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36");
+                
                 conn.setDoOutput(true);
 
                 try(OutputStream os = conn.getOutputStream()) {
@@ -47,11 +39,15 @@ public class CustomMapPlugin extends JavaPlugin {
                     os.write(input, 0, input.length);
                 }
                 
-                conn.getResponseCode(); 
+                int responseCode = conn.getResponseCode(); 
+                if (responseCode != 200) {
+                    getLogger().warning("Data bhejne mein error. Server ne code return kiya: " + responseCode);
+                }
                 conn.disconnect();
             } catch (Exception e) {
-                // Background connection error handle
+                // Ab error console mein print hoga taaki humein problem pata chale
+                getLogger().warning("Website connection error: " + e.getMessage());
             }
         }
-    }
+    } }
 }
